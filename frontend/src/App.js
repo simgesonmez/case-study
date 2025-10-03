@@ -19,7 +19,7 @@ function App() {
     if (filters.maxPrice) params.append("maxPrice", filters.maxPrice);
     if (filters.minScore) params.append("minScore", filters.minScore);
 
-    fetch(`http://localhost:5000/products?${params.toString()}`)
+    fetch(`https://case-study-2-dv4z.onrender.com/products?${params.toString()}`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data.products || []);
