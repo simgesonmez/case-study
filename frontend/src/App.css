@@ -130,4 +130,32 @@
   margin-top: 4px;
   font-size: 12px;
   color: #444;
+} 
+@media (max-width: 768px) {
+  .filters input {
+    min-width: 80px;
+  }
+  .name {
+    font-size: 16px;
+  }
+  .price {
+    font-size: 14px;
+  }
+  .color-btn {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .filters {
+    flex-direction: column;
+    gap: 5px;
+  }
+  .name {
+    font-size: 14px;
+  }
+  .price {
+    font-size: 12px;
+  }
 }
