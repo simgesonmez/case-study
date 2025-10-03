@@ -96,3 +96,21 @@
 .filter-form button:hover {
   background: #555;
 }
+.slick-prev,
+.slick-next {
+  display: block !important;
+   z-index: 10 !important;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: white;
+  opacity: 0.7;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  font-size: 20px;
+ color: black !important;   /* Kırmızı yap, kesin gör */
+  font-size: 32px !important;
+  opacity: 1;
+}
