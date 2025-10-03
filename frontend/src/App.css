@@ -114,3 +114,19 @@
   font-size: 32px !important;
   opacity: 1;
 }
+.color-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.color-btn.active {
+  border: black;
+  transform: scale(1.1);
+}
+
+.color-label {
+  margin-top: 4px;
+  font-size: 12px;
+  color: #444;
+}
