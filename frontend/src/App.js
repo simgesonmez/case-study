@@ -97,7 +97,7 @@ function App() {
           style={{ padding: "5px" }}
         />
       </div>
-<div className="slider-container">
+
       <Slider {...settings}>
         {Array.isArray(products) && products.length > 0 ? (
           products.map((product, idx) => {
@@ -150,7 +150,7 @@ function App() {
           <p>Ürün bulunamadı.</p>
         )}
       </Slider> 
-      </div>
+      
     </div>
   );
 }
