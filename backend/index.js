@@ -6,23 +6,23 @@ const path = require('path');
 const app = express();
 app.use(cors());
 
-// products.json dosyasını oku
+
 const productsPath = path.join(__dirname, 'products.json');
 const products = JSON.parse(fs.readFileSync(productsPath, 'utf8'));
 
-// GOLD_PRICE alma fonksiyonu
+
 async function getGoldPrice() {
   const envPrice = process.env.GOLD_PRICE;
   if (envPrice) return Number(envPrice);
   return 70; // fallback
 }
 
-// fiyat hesaplama
+
 function computePrice(product, goldPrice) {
   const price = (product.popularityScore + 1) * product.weight * goldPrice;
   return Number(price.toFixed(2));
 } 
-// /products endpoint
+
 app.get('/products', async (req, res) => {
   try {
     const goldPrice = await getGoldPrice();
@@ -35,4 +35,33 @@ app.get('/products', async (req, res) => {
       weight: p.weight,
       images: p.images,
       price: computePrice(p, goldPrice)
-    }));
+    })); 
+      // Query filtreleri
+    const minPrice = parseFloat(req.query.minPrice) || 0;
+    const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
+    const minScore = parseFloat(req.query.minScore) || 0;
+    const color = req.query.color;
+
+    // filtre uygula
+    result = result.filter(r => 
+      r.price >= minPrice &&
+      r.price <= maxPrice &&
+      r.popularityScore >= minScore
+    );
+
+    if (color) {
+      result = result.map(r => ({
+        ...r,
+        image: (r.images && r.images[color]) ? r.images[color] : r.images.yellow
+      }));
+    }
+
+    return res.json({ goldPrice, products: result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server ${PORT} portunda çalışıyor`));
