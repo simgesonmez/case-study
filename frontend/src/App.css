@@ -1,1 +1,98 @@
 
+ .product-card {
+  padding: 20px;
+  text-align: center;
+  margin: 0 50px;
+  transition: transform 0.3s ease;
+} 
+
+.product-image {
+  width: 60%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 10px; 
+
+} 
+.name { 
+    margin-right: 155px;
+}
+
+.price {
+  font-weight: bold;
+  font-size: 18px;
+  margin: 5px 0; 
+  font-family: Montserrat; 
+  margin-right: 400px;
+} 
+
+.stars {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px; 
+  margin-right: 210px;
+}
+
+.color-options {
+  display: flex;
+  justify-content: center;
+  gap: 12px; 
+  margin-right: 210px;
+}
+
+.color-btn {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer; 
+  margin-left: -10px; 
+}
+
+.color-btn.yellow {
+  background: #e6ca97;
+}
+.color-btn.white {
+  background: #d9d9d9;
+}
+.color-btn.rose {
+  background: #e1a4a9;
+}
+.stars {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.score {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+.filter-form {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.filter-form input {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 120px;
+}
+
+.filter-form button {
+  padding: 6px 14px;
+  background: #333;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.filter-form button:hover {
+  background: #555;
+}
