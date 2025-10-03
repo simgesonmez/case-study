@@ -27,7 +27,7 @@ app.get('/products', async (req, res) => {
   try {
     const goldPrice = await getGoldPrice();
 
-    // products.json'daki her ürünü price hesaplayarak düzenle
+   
     let result = products.map((p, idx) => ({
       id: idx + 1,
       name: p.name,
@@ -36,13 +36,12 @@ app.get('/products', async (req, res) => {
       images: p.images,
       price: computePrice(p, goldPrice)
     })); 
-      // Query filtreleri
+     
     const minPrice = parseFloat(req.query.minPrice) || 0;
     const maxPrice = parseFloat(req.query.maxPrice) || Infinity;
     const minScore = parseFloat(req.query.minScore) || 0;
     const color = req.query.color;
 
-    // filtre uygula
     result = result.filter(r => 
       r.price >= minPrice &&
       r.price <= maxPrice &&
