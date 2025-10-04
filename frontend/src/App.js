@@ -31,16 +31,16 @@ function App() {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]); 
-  useEffect(() => {
-    const handleResize = () => {
-      if (sliderRef.current) {
-        sliderRef.current.innerSlider.onWindowResized();
-      }
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
+useEffect(() => {
+  const handleResize = () => {
+    if (sliderRef.current) {
+      sliderRef.current.innerSlider.onWindowResized();
+    }
+  };
+  window.addEventListener("resize", handleResize);
+  return () => window.removeEventListener("resize", handleResize);
+}, []);
 
   const settings = {
     dots: false,
