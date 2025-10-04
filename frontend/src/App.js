@@ -4,6 +4,7 @@ import { FaStar } from "react-icons/fa";
 import "./App.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+
 function App() {
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
@@ -11,9 +12,9 @@ function App() {
     maxPrice: "",
     minScore: "",
   });
-  const [selectedColors, setSelectedColors] = useState({}); // seçilen renkler
+  const [selectedColors, setSelectedColors] = useState({});
 
-  // Backend'den ürünleri fetch eden fonksiyon
+
   const fetchProducts = useCallback(() => {
     const params = new URLSearchParams();
     if (filters.minPrice) params.append("minPrice", filters.minPrice);
@@ -28,32 +29,38 @@ function App() {
       .catch((err) => console.error("API Hatası:", err));
   }, [filters]);
 
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
+
+  // Slider ayarları
   const settings = {
-  dots: false,
-  infinite: false,
-  speed: 600,
-  slidesToShow: 4,
-  slidesToScroll: 1,
-  autoplay: false,
-  arrows: true,
-  swipeToSlide: true,
-  responsive: [
-    {
-      breakpoint: 1024, // tablet
-      settings: {
-        slidesToShow: 2,
-        arrows: true,
+    dots: false,
+    infinite: false,
+    speed: 600,
+    slidesToShow: 4,
+    slidesToScroll: 1,
+    autoplay: false,
+    arrows: true,
+    swipeToSlide: true,
+    responsive: [
+      {
+        breakpoint: 1024, // tablet
+        settings: {
+          slidesToShow: 2,
+          arrows: true,
+        },
       },
-    },
-    {
-      breakpoint: 768, // telefon
-      settings: {
-        slidesToShow: 1,
-        arrows: false, // telefonda okları gizle
+      {
+        breakpoint: 768, // telefon
+        settings: {
+          slidesToShow: 1,
+          arrows: false, // telefonda okları gizle
+        },
       },
-    },
-  ],
-};
+    ],
+  };
+
 
   const renderStars = (score) => {
     const stars = [];
@@ -66,23 +73,26 @@ function App() {
     return stars;
   };
 
-
+ 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
-    useEffect(() => {
+
+ 
+  useEffect(() => {
     setTimeout(() => {
       window.dispatchEvent(new Event("resize"));
     }, 500);
   }, []);
+
   return (
     <div style={{ padding: "40px", fontFamily: "Avenir" }}>
       <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
         Product List
       </h1>
 
-     
+   
       <div style={{ marginBottom: "30px", textAlign: "center" }}>
         <input
           type="number"
@@ -110,59 +120,60 @@ function App() {
           style={{ padding: "5px" }}
         />
       </div>
-<div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-      <Slider {...settings}>
-        {Array.isArray(products) && products.length > 0 ? (
-          products.map((product, idx) => {
-            const score = (product.popularityScore * 5).toFixed(1);
-            const currentColor = selectedColors[idx] || "yellow";
-            return (
-              <div key={idx} className="product-card">
-                <img
-                  src={product.images?.[currentColor] || product.image}
-                  alt={product.name}
-                  className="product-image"
-                />
-                <h3 className="name">{product.name}</h3>
-                <p className="price">${product.price}</p>
 
-                <div className="stars">
-                  {renderStars(product.popularityScore)}
-                  <span className="score">{score}/5</span>
-                </div>
+      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
+        <Slider {...settings}>
+          {Array.isArray(products) && products.length > 0 ? (
+            products.map((product, idx) => {
+              const score = (product.popularityScore * 5).toFixed(1);
+              const currentColor = selectedColors[idx] || "yellow";
+              return (
+                <div key={idx} className="product-card">
+                  <img
+                    src={product.images?.[currentColor] || product.image}
+                    alt={product.name}
+                    className="product-image"
+                  />
+                  <h3 className="name">{product.name}</h3>
+                  <p className="price">${product.price}</p>
 
-                <div className="color-options">
-                  {["yellow", "white", "rose"].map(
-                    (color) =>
-                      product.images[color] && (
-                        <div key={color} className="color-choice">
-                          <button
-                            className={`color-btn ${color} ${
-                              selectedColors[idx] === color ? "active" : ""
-                            }`}
-                            onClick={() =>
-                              setSelectedColors((prev) => ({
-                                ...prev,
-                                [idx]: color,
-                              }))
-                            }
-                          ></button>
-                          <span className="color-label">
-                            {color === "yellow" && "Yellow Gold"}
-                            {color === "white" && "White Gold"}
-                            {color === "rose" && "Rose Gold"}
-                          </span>
-                        </div>
-                      )
-                  )}
+                  <div className="stars">
+                    {renderStars(product.popularityScore)}
+                    <span className="score">{score}/5</span>
+                  </div>
+
+                  <div className="color-options">
+                    {["yellow", "white", "rose"].map(
+                      (color) =>
+                        product.images[color] && (
+                          <div key={color} className="color-choice">
+                            <button
+                              className={`color-btn ${color} ${
+                                selectedColors[idx] === color ? "active" : ""
+                              }`}
+                              onClick={() =>
+                                setSelectedColors((prev) => ({
+                                  ...prev,
+                                  [idx]: color,
+                                }))
+                              }
+                            ></button>
+                            <span className="color-label">
+                              {color === "yellow" && "Yellow Gold"}
+                              {color === "white" && "White Gold"}
+                              {color === "rose" && "Rose Gold"}
+                            </span>
+                          </div>
+                        )
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        ) : (
-          <p>Ürün bulunamadı.</p>
-        )}
-      </Slider> 
+              );
+            })
+          ) : (
+            <p>Ürün bulunamadı.</p>
+          )}
+        </Slider>
       </div>
     </div>
   );
