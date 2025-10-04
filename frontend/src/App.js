@@ -10,7 +10,8 @@ function App() {
     maxPrice: "",
     minScore: "",
   });
-  const [selectedColors, setSelectedColors] = useState({}); // seçilen renkler
+  const [selectedColors, setSelectedColors] = useState({}); // seçilen renkler 
+    const sliderRef = useRef(null);
 
   // Backend'den ürünleri fetch eden fonksiyon
   const fetchProducts = useCallback(() => {
@@ -29,7 +30,17 @@ function App() {
 
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]);
+  }, [fetchProducts]); 
+  useEffect(() => {
+    const handleResize = () => {
+      if (sliderRef.current) {
+        sliderRef.current.innerSlider.onWindowResized();
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
 
   const settings = {
     dots: false,
@@ -99,7 +110,7 @@ function App() {
         />
       </div>
 
-      <Slider {...settings}>
+      <Slider ref={sliderRef}{...settings}>
         {Array.isArray(products) && products.length > 0 ? (
           products.map((product, idx) => {
             const score = (product.popularityScore * 5).toFixed(1);

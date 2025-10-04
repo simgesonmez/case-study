@@ -130,3 +130,25 @@
   font-size: 12px;
   color: #444;
 } 
+@media (max-width: 768px) {
+  .product-card {
+    margin: 0 10px; /* büyük margin yerine küçük */
+    padding: 15px;
+  }
+
+  .name,
+  .price,
+  .stars,
+  .color-options {
+    margin-right: 0; /* sağa kayma kalkar */
+    text-align: center; /* ortala */
+  }
+
+  .product-image {
+    height: 180px; /* gerekirse küçült */
+  }
+
+  .filter-form input {
+    width: 100px; /* dar ekran için input daralt */
+  }
+}
