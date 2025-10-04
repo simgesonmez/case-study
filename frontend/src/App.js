@@ -2,7 +2,8 @@ import React, { useEffect, useState, useCallback } from "react";
 import Slider from "react-slick";
 import { FaStar } from "react-icons/fa";
 import "./App.css";
-
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 function App() {
   const [products, setProducts] = useState([]);
   const [filters, setFilters] = useState({
@@ -27,14 +28,6 @@ function App() {
       .catch((err) => console.error("API Hatası:", err));
   }, [filters]);
 
-  useEffect(() => {
-    fetchProducts();
-  }, [fetchProducts]);
- useEffect(() => {
-    setTimeout(() => {
-      window.dispatchEvent(new Event("resize"));
-    }, 500);
-  }, []);
   const settings = {
   dots: false,
   infinite: false,
@@ -78,7 +71,11 @@ function App() {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
-
+    useEffect(() => {
+    setTimeout(() => {
+      window.dispatchEvent(new Event("resize"));
+    }, 500);
+  }, []);
   return (
     <div style={{ padding: "40px", fontFamily: "Avenir" }}>
       <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
