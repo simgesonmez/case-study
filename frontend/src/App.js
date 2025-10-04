@@ -32,19 +32,31 @@ function App() {
   }, [fetchProducts]);
 
   const settings = {
-    dots: false,
-    infinite: false,
-    speed: 600,
-    slidesToShow: 4,
-    slidesToScroll: 1,
-    autoplay: false,
-    arrows: true,
-    swipeToSlide: true,
-    responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 1 } },
-    ],
-  };
+  dots: false,
+  infinite: false,
+  speed: 600,
+  slidesToShow: 4,
+  slidesToScroll: 1,
+  autoplay: false,
+  arrows: true,
+  swipeToSlide: true,
+  responsive: [
+    {
+      breakpoint: 1024, // tablet
+      settings: {
+        slidesToShow: 2,
+        arrows: true,
+      },
+    },
+    {
+      breakpoint: 768, // telefon
+      settings: {
+        slidesToShow: 1,
+        arrows: false, // telefonda okları gizle
+      },
+    },
+  ],
+};
 
   const renderStars = (score) => {
     const stars = [];
@@ -97,7 +109,7 @@ function App() {
           style={{ padding: "5px" }}
         />
       </div>
-<div style={{ overflow: "hidden", width: "100%" }}>
+<div style={{ maxWidth: "1200px", margin: "0 auto" }}>
       <Slider {...settings}>
         {Array.isArray(products) && products.length > 0 ? (
           products.map((product, idx) => {
