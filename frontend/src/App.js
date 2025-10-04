@@ -1,6 +1,8 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Slider from "react-slick";
 import { FaStar } from "react-icons/fa";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 import "./App.css";
 
 function App() {
@@ -10,10 +12,10 @@ function App() {
     maxPrice: "",
     minScore: "",
   });
-  const [selectedColors, setSelectedColors] = useState({}); // seçilen renkler 
-    const sliderRef = useRef(null);
+  const [selectedColors, setSelectedColors] = useState({});
+  const sliderRef = useRef(null);
 
-  // Backend'den ürünleri fetch eden fonksiyon
+  // Backend fetch
   const fetchProducts = useCallback(() => {
     const params = new URLSearchParams();
     if (filters.minPrice) params.append("minPrice", filters.minPrice);
@@ -22,25 +24,22 @@ function App() {
 
     fetch(`https://case-study-2-dv4z.onrender.com/products?${params.toString()}`)
       .then((res) => res.json())
-      .then((data) => {
-        setProducts(data.products || []);
-      })
+      .then((data) => setProducts(data.products || []))
       .catch((err) => console.error("API Hatası:", err));
   }, [filters]);
 
   useEffect(() => {
     fetchProducts();
-  }, [fetchProducts]); 
+  }, [fetchProducts]);
 
-useEffect(() => {
-  const handleResize = () => {
-    if (sliderRef.current) {
-      sliderRef.current.innerSlider.onWindowResized();
-    }
-  };
-  window.addEventListener("resize", handleResize);
-  return () => window.removeEventListener("resize", handleResize);
-}, []);
+  // Slider resize fix
+  useEffect(() => {
+    const handleResize = () => {
+      if (sliderRef.current) sliderRef.current.innerSlider.onWindowResized();
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const settings = {
     dots: false,
@@ -50,8 +49,7 @@ useEffect(() => {
     slidesToScroll: 1,
     autoplay: false,
     arrows: true,
-    swipeToSlide: true, 
-    initialSlide: 0,
+    swipeToSlide: true,
     responsive: [
       { breakpoint: 1024, settings: { slidesToShow: 2 } },
       { breakpoint: 600, settings: { slidesToShow: 1 } },
@@ -69,27 +67,22 @@ useEffect(() => {
     return stars;
   };
 
-
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div style={{ padding: "40px", fontFamily: "Avenir" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Product List
-      </h1>
+    <div className="app-container">
+      <h1>Product List</h1>
 
-     
-      <div style={{ marginBottom: "30px", textAlign: "center" }}>
+      <div className="filter-form">
         <input
           type="number"
           placeholder="Min Fiyat"
           name="minPrice"
           value={filters.minPrice}
           onChange={handleFilterChange}
-          style={{ marginRight: "10px", padding: "5px" }}
         />
         <input
           type="number"
@@ -97,7 +90,6 @@ useEffect(() => {
           name="maxPrice"
           value={filters.maxPrice}
           onChange={handleFilterChange}
-          style={{ marginRight: "10px", padding: "5px" }}
         />
         <input
           type="number"
@@ -106,13 +98,12 @@ useEffect(() => {
           step="0.1"
           value={filters.minScore}
           onChange={handleFilterChange}
-          style={{ padding: "5px" }}
         />
       </div>
 
-      <Slider ref={sliderRef}{...settings}>
-        {Array.isArray(products) && products.length > 0 ? (
-          products.map((product, idx) => {
+      {Array.isArray(products) && products.length > 0 ? (
+        <Slider ref={sliderRef} {...settings}>
+          {products.map((product, idx) => {
             const score = (product.popularityScore * 5).toFixed(1);
             const currentColor = selectedColors[idx] || "yellow";
             return (
@@ -157,17 +148,17 @@ useEffect(() => {
                 </div>
               </div>
             );
-          })
-        ) : (
-          <p>Ürün bulunamadı.</p>
-        )}
-      </Slider> 
-      
+          })}
+        </Slider>
+      ) : (
+        <p>Ürün bulunamadı.</p>
+      )}
     </div>
   );
 }
 
 export default App;
+
 
 
 
