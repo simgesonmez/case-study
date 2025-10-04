@@ -30,7 +30,11 @@ function App() {
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
-
+ useEffect(() => {
+    setTimeout(() => {
+      window.dispatchEvent(new Event("resize"));
+    }, 500);
+  }, []);
   const settings = {
   dots: false,
   infinite: false,
