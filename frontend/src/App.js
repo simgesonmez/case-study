@@ -1,8 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Slider from "react-slick";
 import { FaStar } from "react-icons/fa";
-import "slick-carousel/slick/slick.css";
-import "slick-carousel/slick/slick-theme.css";
 import "./App.css";
 
 function App() {
@@ -12,10 +10,9 @@ function App() {
     maxPrice: "",
     minScore: "",
   });
-  const [selectedColors, setSelectedColors] = useState({});
-  const sliderRef = useRef(null);
+  const [selectedColors, setSelectedColors] = useState({}); // seçilen renkler
 
-  // Backend fetch
+  // Backend'den ürünleri fetch eden fonksiyon
   const fetchProducts = useCallback(() => {
     const params = new URLSearchParams();
     if (filters.minPrice) params.append("minPrice", filters.minPrice);
@@ -24,22 +21,15 @@ function App() {
 
     fetch(`https://case-study-2-dv4z.onrender.com/products?${params.toString()}`)
       .then((res) => res.json())
-      .then((data) => setProducts(data.products || []))
+      .then((data) => {
+        setProducts(data.products || []);
+      })
       .catch((err) => console.error("API Hatası:", err));
   }, [filters]);
 
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);
-
-  // Slider resize fix
-  useEffect(() => {
-    const handleResize = () => {
-      if (sliderRef.current) sliderRef.current.innerSlider.onWindowResized();
-    };
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   const settings = {
     dots: false,
@@ -67,22 +57,27 @@ function App() {
     return stars;
   };
 
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div className="app-container">
-      <h1>Product List</h1>
+    <div style={{ padding: "40px", fontFamily: "Avenir" }}>
+      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
+        Product List
+      </h1>
 
-      <div className="filter-form">
+     
+      <div style={{ marginBottom: "30px", textAlign: "center" }}>
         <input
           type="number"
           placeholder="Min Fiyat"
           name="minPrice"
           value={filters.minPrice}
           onChange={handleFilterChange}
+          style={{ marginRight: "10px", padding: "5px" }}
         />
         <input
           type="number"
@@ -90,6 +85,7 @@ function App() {
           name="maxPrice"
           value={filters.maxPrice}
           onChange={handleFilterChange}
+          style={{ marginRight: "10px", padding: "5px" }}
         />
         <input
           type="number"
@@ -98,12 +94,13 @@ function App() {
           step="0.1"
           value={filters.minScore}
           onChange={handleFilterChange}
+          style={{ padding: "5px" }}
         />
       </div>
 
-      {Array.isArray(products) && products.length > 0 ? (
-        <Slider ref={sliderRef} {...settings}>
-          {products.map((product, idx) => {
+      <Slider {...settings}>
+        {Array.isArray(products) && products.length > 0 ? (
+          products.map((product, idx) => {
             const score = (product.popularityScore * 5).toFixed(1);
             const currentColor = selectedColors[idx] || "yellow";
             return (
@@ -148,11 +145,12 @@ function App() {
                 </div>
               </div>
             );
-          })}
-        </Slider>
-      ) : (
-        <p>Ürün bulunamadı.</p>
-      )}
+          })
+        ) : (
+          <p>Ürün bulunamadı.</p>
+        )}
+      </Slider> 
+      
     </div>
   );
 }
