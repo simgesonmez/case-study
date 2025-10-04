@@ -10,9 +10,16 @@ function App() {
     maxPrice: "",
     minScore: "",
   });
-  const [selectedColors, setSelectedColors] = useState({}); // seçilen renkler
+  const [selectedColors, setSelectedColors] = useState({});
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // Backend'den ürünleri fetch eden fonksiyon
+  // Pencere boyutu değişikliğini dinle
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fetchProducts = useCallback(() => {
     const params = new URLSearchParams();
     if (filters.minPrice) params.append("minPrice", filters.minPrice);
@@ -38,11 +45,31 @@ function App() {
     slidesToShow: 4,
     slidesToScroll: 1,
     autoplay: false,
-    arrows: true,
+    arrows: windowWidth > 600, // Mobilde okları gizle
     swipeToSlide: true,
     responsive: [
-      { breakpoint: 1024, settings: { slidesToShow: 2 } },
-      { breakpoint: 600, settings: { slidesToShow: 1 } },
+      { 
+        breakpoint: 1024, 
+        settings: { 
+          slidesToShow: 3,
+          arrows: windowWidth > 600
+        } 
+      },
+      { 
+        breakpoint: 768, 
+        settings: { 
+          slidesToShow: 2,
+          arrows: false
+        } 
+      },
+      { 
+        breakpoint: 480, 
+        settings: { 
+          slidesToShow: 1,
+          arrows: false,
+          dots: true // Mobilde dots göster
+        } 
+      },
     ],
   };
 
@@ -57,27 +84,24 @@ function App() {
     return stars;
   };
 
-
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   return (
-    <div style={{ padding: "40px", fontFamily: "Avenir" }}>
-      <h1 style={{ textAlign: "center", marginBottom: "20px" }}>
-        Product List
-      </h1>
+    <div className="app-container">
+      <h1 className="main-title">Product List</h1>
 
-     
-      <div style={{ marginBottom: "30px", textAlign: "center" }}>
+      {/* Filtreler - Responsive düzen */}
+      <div className={`filter-container ${windowWidth < 600 ? 'filter-mobile' : ''}`}>
         <input
           type="number"
           placeholder="Min Fiyat"
           name="minPrice"
           value={filters.minPrice}
           onChange={handleFilterChange}
-          style={{ marginRight: "10px", padding: "5px" }}
+          className="filter-input"
         />
         <input
           type="number"
@@ -85,7 +109,7 @@ function App() {
           name="maxPrice"
           value={filters.maxPrice}
           onChange={handleFilterChange}
-          style={{ marginRight: "10px", padding: "5px" }}
+          className="filter-input"
         />
         <input
           type="number"
@@ -94,63 +118,65 @@ function App() {
           step="0.1"
           value={filters.minScore}
           onChange={handleFilterChange}
-          style={{ padding: "5px" }}
+          className="filter-input"
         />
       </div>
 
-      <Slider {...settings}>
-        {Array.isArray(products) && products.length > 0 ? (
-          products.map((product, idx) => {
-            const score = (product.popularityScore * 5).toFixed(1);
-            const currentColor = selectedColors[idx] || "yellow";
-            return (
-              <div key={idx} className="product-card">
-                <img
-                  src={product.images?.[currentColor] || product.image}
-                  alt={product.name}
-                  className="product-image"
-                />
-                <h3 className="name">{product.name}</h3>
-                <p className="price">${product.price}</p>
+      {/* Slider */}
+      <div className="slider-container">
+        <Slider {...settings}>
+          {Array.isArray(products) && products.length > 0 ? (
+            products.map((product, idx) => {
+              const score = (product.popularityScore * 5).toFixed(1);
+              const currentColor = selectedColors[idx] || "yellow";
+              return (
+                <div key={idx} className="product-card">
+                  <img
+                    src={product.images?.[currentColor] || product.image}
+                    alt={product.name}
+                    className="product-image"
+                  />
+                  <h3 className="product-name">{product.name}</h3>
+                  <p className="product-price">${product.price}</p>
 
-                <div className="stars">
-                  {renderStars(product.popularityScore)}
-                  <span className="score">{score}/5</span>
-                </div>
+                  <div className="stars-container">
+                    {renderStars(product.popularityScore)}
+                    <span className="score-text">{score}/5</span>
+                  </div>
 
-                <div className="color-options">
-                  {["yellow", "white", "rose"].map(
-                    (color) =>
-                      product.images[color] && (
-                        <div key={color} className="color-choice">
-                          <button
-                            className={`color-btn ${color} ${
-                              selectedColors[idx] === color ? "active" : ""
-                            }`}
-                            onClick={() =>
-                              setSelectedColors((prev) => ({
-                                ...prev,
-                                [idx]: color,
-                              }))
-                            }
-                          ></button>
-                          <span className="color-label">
-                            {color === "yellow" && "Yellow Gold"}
-                            {color === "white" && "White Gold"}
-                            {color === "rose" && "Rose Gold"}
-                          </span>
-                        </div>
-                      )
-                  )}
+                  <div className="color-options">
+                    {["yellow", "white", "rose"].map(
+                      (color) =>
+                        product.images[color] && (
+                          <div key={color} className="color-choice">
+                            <button
+                              className={`color-btn ${color} ${
+                                selectedColors[idx] === color ? "active" : ""
+                              }`}
+                              onClick={() =>
+                                setSelectedColors((prev) => ({
+                                  ...prev,
+                                  [idx]: color,
+                                }))
+                              }
+                            ></button>
+                            <span className="color-label">
+                              {color === "yellow" && "Yellow Gold"}
+                              {color === "white" && "White Gold"}
+                              {color === "rose" && "Rose Gold"}
+                            </span>
+                          </div>
+                        )
+                    )}
+                  </div>
                 </div>
-              </div>
-            );
-          })
-        ) : (
-          <p>Ürün bulunamadı.</p>
-        )}
-      </Slider> 
-      
+              );
+            })
+          ) : (
+            <p className="no-products">Ürün bulunamadı.</p>
+          )}
+        </Slider> 
+      </div>
     </div>
   );
 }
