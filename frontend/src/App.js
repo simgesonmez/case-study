@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Slider from "react-slick";
 import { FaStar } from "react-icons/fa";
 import "./App.css";
@@ -11,7 +11,8 @@ function App() {
     minPrice: "",
     maxPrice: "",
     minScore: "",
-  });
+  }); 
+  const sliderRef = useRef(null);
   const [selectedColors, setSelectedColors] = useState({});
 
 
@@ -44,21 +45,9 @@ function App() {
     arrows: true,
     swipeToSlide: true,
     responsive: [
-      {
-        breakpoint: 1024, // tablet
-        settings: {
-          slidesToShow: 2,
-          arrows: true,
-        },
-      },
-      {
-        breakpoint: 768, // telefon
-        settings: {
-          slidesToShow: 1,
-          arrows: false, // telefonda okları gizle
-        },
-      },
-    ],
+       { breakpoint: 1024, settings: { slidesToShow: 2 } },
+  { breakpoint: 768, settings: { slidesToShow: 1, arrows: false } },
+], 
   };
 
 
@@ -79,12 +68,17 @@ function App() {
     setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
- 
-  useEffect(() => {
-    setTimeout(() => {
-      window.dispatchEvent(new Event("resize"));
-    }, 500);
-  }, []);
+useEffect(() => {
+  // 0.5 saniye sonra resize event tetikleyerek slider’ı yeniden hesaplat
+  setTimeout(() => {
+    window.dispatchEvent(new Event("resize"));
+  }, 500);
+
+  // slider ref ile de force update
+  if (sliderRef.current) {
+    sliderRef.current.innerSlider.onWindowResized();
+  }
+}, []);
 
   return (
     <div style={{ padding: "40px", fontFamily: "Avenir" }}>
@@ -121,8 +115,8 @@ function App() {
         />
       </div>
 
-      <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
-        <Slider {...settings}>
+      <div className="slider-container">
+        <Slider ref={sliderRef} {...settings}>
           {Array.isArray(products) && products.length > 0 ? (
             products.map((product, idx) => {
               const score = (product.popularityScore * 5).toFixed(1);
